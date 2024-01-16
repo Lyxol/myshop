@@ -20,10 +20,8 @@ class AccessTokenHandler implements AccessTokenHandlerInterface
         $token = $this->repository->findOneByToken($accessToken);
         if($token === null)
             throw new BadCredentialsException('Invalid Credentials');
-        if($token->getExpireAt() < new DateTime()){
-            $this->entityManager->remove($token);
+        if($token->getExpireAt() < new DateTime())
             throw new BadCredentialsException('Token Expired');
-        }
             
         $account = $token->getAccount();
         return new UserBadge($account->getEmail());
