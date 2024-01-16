@@ -34,19 +34,12 @@ class TokenController extends AbstractController
         $account = $this->accountRepository->findByEmailAndPassword($email, $password);
         if($account === null)
             return $this->json(["error" => "No Account Were Found"],401);
-
-        //TODO:à tester
-        $token =  $this->tokenRepository->findOneByAccount($account);
-        if($token !== null)
-            $this->entityManager->remove($token);
-        $token = new Token();
+        $token =  $account->getToken();
         do {
-            $tkn_string = ByteString::fromRandom(255)->toString();
+            $tkn_string = ByteString::fromRandom(128)->toString();
         } while ($this->tokenRepository->findOneByToken($tkn_string) !== null);
         $token->setToken($tkn_string);
-        $token->setAccount($account);
         $token->setExpireAt((new DateTime())->modify('+1 hour'));
-        $this->entityManager->persist($token);
         $this->entityManager->flush();
 
         return $this->json(["token" => $token->getToken()]);
@@ -73,7 +66,7 @@ class TokenController extends AbstractController
 
         $token = new Token();
         do {
-            $tkn_string = ByteString::fromRandom(255)->toString();
+            $tkn_string = ByteString::fromRandom(128)->toString();
         } while ($this->tokenRepository->findOneByToken($tkn_string) !== null);
         $token->setToken($tkn_string);
         $token->setAccount($account);
