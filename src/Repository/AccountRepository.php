@@ -40,16 +40,6 @@ class AccountRepository extends ServiceEntityRepository implements PasswordUpgra
         $this->getEntityManager()->flush();
     }
 
-    public function findByEmailAndPassword(string $email, string $pass): ?Account
-    {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.email = :email')
-            ->andWhere('a.password = :pass')
-            ->setParameter('email', $email)
-            ->setParameter('pass', $pass)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
 //    /**
 //     * @return Account[] Returns an array of Account objects
 //     */
